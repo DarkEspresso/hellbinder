@@ -23,43 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package tech.darkespresso.hellbinder.annotations;
+package tech.darkespresso.hellbinder;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import tech.darkespresso.hellbinder.annotations.SortCriterion;
 /**
- * Annotates a class with fields that should be mapped to columns of a Cursor returned by a query
- * to a ContentProvider.
- * <p>The hellbinder annotation processor will generate a class containing static utility methods
- * to retrieve objects of this class.
- * <p>For example:
- * <pre>{@code
- *     package foo.bar;
- *
- *    @literal @ContentProviderEntity("ContactsCollection")
- *     public class Contact {
- *        @literal @ContentUri public static final Uri URI = Contacts.CONTENT_URI;
- *        @literal @Id @Column(Contacts._ID) public long id;
- *         ...
- *     }
- * }
- * <p>will generate:
- * <pre>{@code
- *     package foo.bar;
- *
- *     public final class ContactsCollection {
- *         ...
- *         public static CursorIterable<Contact> get(ContentProvider contentProvider) {...}
- *         public static Contact getById(ContentProvider contentProvider, long id) {...}
- *         ...
- *     }
- * }
+ * An enum containing the two possible values for the ordering that can be imposed on a field
+ * annotated with {@link SortCriterion}.
  */
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.TYPE)
-public @interface ContentProviderEntity {
-  /** The name of the generated class. */
-  String value();
+public enum Order {
+  ASCENDING("ASC"),
+  DESCENDING("DESC");
+
+  private final String representation;
+
+  Order(String representation) {
+    this.representation = representation;
+  }
+
+  @Override
+  public String toString() {
+    return representation;
+  }
 }

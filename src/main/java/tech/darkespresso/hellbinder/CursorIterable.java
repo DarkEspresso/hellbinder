@@ -22,22 +22,21 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package tech.darkespresso.hellbinder;
 
 /**
  * An object that wraps a cursor, can be used in a try-with-resource statement and is iterable. Its
- * iterator's {@link java.util.Iterator#next() next()} method automatically allocates and returns
- * an object of type {@link E}.
+ * iterator's {@link java.util.Iterator#next() next()} method automatically allocates and returns an
+ * object of type {@link E}.
  *
- * @param <E> Any class annotated with
- * {@link tech.darkespresso.hellbinder.annotations.ContentProviderEntity ContentProviderEntity}
+ * @param <E> Any class annotated with {@link
+ *     tech.darkespresso.hellbinder.annotations.ContentProviderEntity ContentProviderEntity}
  */
 public interface CursorIterable<E> extends AutoCloseable, Iterable<E> {
   @Override
   void close();
 
-  /**
-   * @return the count of rows returned by the wrapped {@code android.database.Cursor}.
-   */
+  /** @return the count of rows returned by the wrapped {@code android.database.Cursor}. */
   int size();
 }

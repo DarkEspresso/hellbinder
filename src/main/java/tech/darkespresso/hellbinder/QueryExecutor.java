@@ -22,27 +22,18 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package tech.darkespresso.hellbinder;
 
 /**
- * Represents a constraint that entities returned by a query must satisfy. This is used by
- * generated code to provide an interface to concatenate constraints or executing the query.
- * <p> It is returned by every method that imposes a constraint.
+ * An interface to obtain a {@link CursorIterable} of {@link Entity Entities}. This is overridden by
+ * generated code.
  *
- * @param <Entity> The entity class.
- * @param <ContentResolver> The content resolver class.
- * @param <Keyword> An interface returned by a keyword method.
+ * @param <Entity> A class (annotated with {@link
+ *     tech.darkespresso.hellbinder.annotations.ContentProviderEntity}.
+ * @param <ContentResolver> The class representing Android's content resolver.
  */
-public interface Constraint<Entity, ContentResolver, Keyword> {
-  /**
-   * Returns the first element that satisfies the query, or {@code null} if no such element exists.
-   *
-   * @param contentResolver an object of type {@link ContentResolver} that will be used when
-   *     retrieving the entity.
-   * @return the first object that satisfies the query, or {@code null}.
-   */
-  Entity getFirst(ContentResolver contentResolver);
-
+public interface QueryExecutor<Entity, ContentResolver> {
   /**
    * Returns an iterable wrapped around a closeable resource, that can be used to obtain all of the
    * elements that satisfy the constraints of the query.
@@ -54,17 +45,11 @@ public interface Constraint<Entity, ContentResolver, Keyword> {
   CursorIterable<Entity> get(ContentResolver contentResolver);
 
   /**
-   * Connects two {@link Constraint}s with an AND predicate (both must be satisfied).
+   * Returns the first element that satisfies the query, or {@code null} if no such element exists.
    *
-   * @return A non-terminal node in the builder chain.
+   * @param contentResolver an object of type {@link ContentResolver} that will be used when
+   *     retrieving the entity.
+   * @return the first object that satisfies the query, or {@code null}.
    */
-  Keyword and();
-
-  /**
-   * Connects two {@link Constraint}s with an OR predicate (either one or the other must be
-   * satisfied).
-   *
-   * @return A non-terminal node in the builder chain.
-   */
-  Keyword or();
+  Entity getFirst(ContentResolver contentResolver);
 }

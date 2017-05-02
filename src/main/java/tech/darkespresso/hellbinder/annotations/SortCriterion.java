@@ -30,36 +30,24 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 /**
- * Annotates a class with fields that should be mapped to columns of a Cursor returned by a query
- * to a ContentProvider.
- * <p>The hellbinder annotation processor will generate a class containing static utility methods
- * to retrieve objects of this class.
- * <p>For example:
+ * Annotates fields that can be used to sort the results. These fields should also be annotated
+ * with {@link Column}.
+ * <p>For example
  * <pre>{@code
- *     package foo.bar;
- *
  *    @literal @ContentProviderEntity("ContactsCollection")
  *     public class Contact {
- *        @literal @ContentUri public static final Uri URI = Contacts.CONTENT_URI;
- *        @literal @Id @Column(Contacts._ID) public long id;
+ *        @literal @Sortable
+ *        @literal @Column(Contacts.DISPLAY_NAME) public String name;
  *         ...
  *     }
  * }
- * <p>will generate:
+ * </pre>
+ * will make it possible to query the collection as follows:
  * <pre>{@code
- *     package foo.bar;
- *
- *     public final class ContactsCollection {
- *         ...
- *         public static CursorIterable<Contact> get(ContentProvider contentProvider) {...}
- *         public static Contact getById(ContentProvider contentProvider, long id) {...}
- *         ...
- *     }
- * }
+ *     ...
+ *     ContactsCollection.sortBy().name(Order.ASCENDING).get();
+ * }</pre>
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.TYPE)
-public @interface ContentProviderEntity {
-  /** The name of the generated class. */
-  String value();
-}
+@Target(ElementType.FIELD)
+public @interface SortCriterion {}

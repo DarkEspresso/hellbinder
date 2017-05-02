@@ -22,27 +22,27 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package tech.darkespresso.hellbinder;
 
-/**
- * An enum with the possible operators for the constraints.
- */
+/** An enum with the possible operators for the constraints. */
 public enum Operator {
-    EQ("="),
-    NE("<>"),
-    LT("<"),
-    LE("<="),
-    GT(">"),
-    GE(">="),
-    LIKE("LIKE");
+  EQ("="),
+  NE("<>"),
+  LT("<"),
+  LE("<="),
+  GT(">"),
+  GE(">="),
+  LIKE("LIKE");
 
-    private final String representation;
-    Operator(String representation) {
-        this.representation = representation;
-    }
+  private final String representation;
 
-    @Override
-    public String toString() {
-        return representation;
-    }
+  Operator(String representation) {
+    this.representation = representation;
+  }
+
+  @Override
+  public String toString() {
+    return representation;
+  }
 }
