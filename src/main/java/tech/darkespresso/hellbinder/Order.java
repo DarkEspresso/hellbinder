@@ -32,7 +32,9 @@ import tech.darkespresso.hellbinder.annotations.SortCriterion;
  */
 public enum Order {
   ASCENDING("ASC"),
-  DESCENDING("DESC");
+  DESCENDING("DESC"),
+  ASCENDING_NOCASE("COLLATE LOCALIZED ASC"),
+  DESCENDING_NOCASE("COLLATE LOCALIZED DESC");
 
   private final String representation;
 

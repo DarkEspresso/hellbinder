@@ -25,9 +25,10 @@
 
 package tech.darkespresso.hellbinder;
 
+import java.util.List;
 /**
- * An interface to obtain a {@link CursorIterable} of {@link Entity Entities}. This is overridden by
- * generated code.
+ * An interface to obtain a {@link List} of {@link Entity Entities}. This is overridden by generated
+ * code.
  *
  * @param <Entity> A class (annotated with {@link
  *     tech.darkespresso.hellbinder.annotations.ContentProviderEntity}.
@@ -42,14 +43,14 @@ public interface QueryExecutor<Entity, ContentResolver> {
    *     retrieving the entity.
    * @return an iterable of objects that satisfy the query, or {@code null}.
    */
-  CursorIterable<Entity> get(ContentResolver contentResolver);
+  CloseableList<Entity> get(ContentResolver contentResolver);
 
   /**
-   * Returns the first element that satisfies the query, or {@code null} if no such element exists.
+   * Returns the number of entities satisfying the query.
    *
    * @param contentResolver an object of type {@link ContentResolver} that will be used when
    *     retrieving the entity.
-   * @return the first object that satisfies the query, or {@code null}.
+   * @return the number of elements that satisfy the query.
    */
-  Entity getFirst(ContentResolver contentResolver);
+  int count(ContentResolver contentResolver);
 }

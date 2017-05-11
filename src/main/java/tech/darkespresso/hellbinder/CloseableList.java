@@ -25,6 +25,7 @@
 
 package tech.darkespresso.hellbinder;
 
+import java.util.List;
 /**
  * An object that wraps a cursor, can be used in a try-with-resource statement and is iterable. Its
  * iterator's {@link java.util.Iterator#next() next()} method automatically allocates and returns an
@@ -33,10 +34,20 @@ package tech.darkespresso.hellbinder;
  * @param <E> Any class annotated with {@link
  *     tech.darkespresso.hellbinder.annotations.ContentProviderEntity ContentProviderEntity}
  */
-public interface CursorIterable<E> extends AutoCloseable, Iterable<E> {
-  @Override
-  void close();
+public interface CloseableList<E> extends AutoCloseable, List<E> {
+    /**
+     * Returns the entity at the specified position.
+     * <p>If the second parameter is not null, its
+     * {@link tech.darkespresso.hellbinder.annotations.Column}-annotated fields will be modified
+     * accordingly, and it will be returned. Otherwise, a new instance of {@link E} will be
+     * allocated.
+     * @param index
+     * @param e
+     * @return an instance of {@link E} corresponding to the index-th row returned by the query
+     * that produced this list.
+     */
+    E get(int index, E e);
 
-  /** @return the count of rows returned by the wrapped {@code android.database.Cursor}. */
-  int size();
+    @Override
+    void close();
 }
