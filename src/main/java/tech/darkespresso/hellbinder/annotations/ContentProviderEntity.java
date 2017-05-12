@@ -34,28 +34,82 @@ import java.lang.annotation.Target;
  * to a ContentProvider.
  * <p>The hellbinder annotation processor will generate a class containing static utility methods
  * to retrieve objects of this class.
- * <p>For example:
- * <pre>{@code
- *     package foo.bar;
  *
- *    @literal @ContentProviderEntity("ContactsCollection")
- *     public class Contact {
- *        @literal @ContentUri public static final Uri URI = Contacts.CONTENT_URI;
- *        @literal @Id @Column(Contacts._ID) public long id;
- *         ...
- *     }
- * }
- * <p>will generate:
- * <pre>{@code
- *     package foo.bar;
+ * <p>For example, suppose that a class name {@code com.foobar.Contact} is annotated with {@code
+ * @literal @ContentProviderEntity("Contacts")}:
  *
- *     public final class ContactsCollection {
- *         ...
- *         public static CursorIterable<Contact> get(ContentProvider contentProvider) {...}
- *         public static Contact getById(ContentProvider contentProvider, long id) {...}
- *         ...
- *     }
- * }
+ * <pre>{@code
+ * package com.foobar;
+ * ...
+ *@literal @ContentProivderEntity("Contacts")
+ * public class Contact {
+ *    @literal @ContentUri public static final Uri URI = ContactsContract.Contacts.CONTENT_URI;
+ *
+ *    @literal @Id
+ *    @literal @Column(ContactsContract.Contacts._ID)
+ *     public long id;
+ *
+ *    @literal @SortCriterion
+ *    @literal @Column(ContactsContract.Contacts.DISPLAY_NAME)
+ *     public String name;
+ *
+ *    @literal @Constraint
+ *    @literal @Column(ContactsContract.Contacts.HAS_PHONE_NUMBER)
+ *     public int hasPhoneNumber;
+ *
+ *    @literal @Column(ContactsContract.Contacts.PHOTO_ID)
+ *     public String photoId;
+ *     ...
+ * }}</pre>
+ *
+ * The generated class will be:
+ *
+ * <pre>{@code
+ * package com.foobar;
+ * ...
+ * public class Contacts {
+ *   ...
+ *   public static QueryBuilder where() { ... }
+ *
+ *   public static OrderBuilder sortBy() { ... }
+ *
+ *   public static CloseableList<Contact> get(ContentResolver contentResolver) { ... }
+ *
+ *   public static Contact getById(ContentResolver contentResolver, long id) { ... }
+ * }}</pre>
+ *
+ * <p>The generated class will also contain a bunch of interfaces used to build queries. It is
+ * then possible to write, for example:
+ *
+ * <pre>{@code
+ *   ...
+ *   CloseableList<Contact> contacts;
+ *   try {
+ *       contacts = Contacts.where()
+ *           .hasPhoneNumber(Operator.EQ, 1)
+ *           .sortBy()
+ *           .name(Order.ASCENDING)
+ *           .get(contentResolver);
+ *       // do stuff with contacts
+ *   } finally {
+ *       contacts.close();
+ *   }
+ * }</pre>
+ *
+ * <p>Note that {@code where()} is only present if at least one field annotated with
+ * {@link tech.darkespresso.hellbinder.annotations.Column Column} is also annotated with
+ * {@link tech.darkespresso.hellbinder.annotations.Constraint Constraint}, {@code sortBy()} is
+ * only present if at least one field annotated with
+ * {@link tech.darkespresso.hellbinder.annotations.Column Column} is also annotated with
+ * {@link tech.darkespresso.hellbinder.annotations.SortCriterion SortCriterion}, and {@code
+ * getById()} appears only if there is one (and only one) field annotated with
+ * {@link tech.darkespresso.hellbinder.annotations.Column Column} that is also annotated with
+ * {@link tech.darkespresso.hellbinder.annotations.Id Id}.
+ *
+ * <p>{@code @ContentUri} can also be used to annotate a static method that requires some
+ * parameters. In that case, the generated class will only contain a method called {@code
+ * withUriParams(...)}, which takes the same parameters as the annotated method, and returns an
+ * interface that expose the same methods that would otherwise be static.
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
