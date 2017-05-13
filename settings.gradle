@@ -1,0 +1,2 @@
+include ':hellbinder:lib', ':compiler'
+project(':hellbinder:lib').projectDir = new File(rootDir, 'lib')
