@@ -36,5 +36,6 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
 }
 
 coveralls {
+  sourceDirs = files(project(':compiler').sourceSets.main.allSource.srcDirs).files.absolutePath
   jacocoReportPath "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
