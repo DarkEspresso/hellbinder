@@ -34,3 +34,7 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     xml.enabled true
   }
 }
+
+coveralls {
+  jacocoReportPath '${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml'
+}
