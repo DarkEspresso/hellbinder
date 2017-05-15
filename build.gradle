@@ -36,5 +36,5 @@ task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
 }
 
 coveralls {
-  jacocoReportPath '${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml'
+  jacocoReportPath "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
