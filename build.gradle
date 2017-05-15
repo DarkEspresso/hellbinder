@@ -3,8 +3,34 @@ plugins {
   id 'com.github.kt3k.coveralls' version '2.8.1'
 }
 
-subprojects {
+allprojects {
+  apply plugin: 'base'
+
   repositories {
     mavenCentral()
+  }
+}
+
+project(':compiler') {
+  apply plugin: 'jacoco'
+
+  jacoco {
+    toolVersion '0.7.6.201602180812'
+  }
+
+}
+
+subprojects {
+  apply plugin: 'java'
+}
+
+task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+  dependsOn project(':compiler').test
+  sourceDirectories = files(project(':compiler').sourceSets.main.allSource.srcDirs)
+  classDirectories = files(project(':compiler').sourceSets.main.output)
+  executionData = files(project(':compiler').jacocoTestReport.executionData)
+  reports {
+    html.enabled true
+    xml.enabled true
   }
 }
