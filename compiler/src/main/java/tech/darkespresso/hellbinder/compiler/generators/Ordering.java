@@ -36,12 +36,13 @@ import com.squareup.javapoet.TypeSpec;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import tech.darkespresso.hellbinder.QueryExecutor;
+import tech.darkespresso.hellbinder.annotations.ContentProviderEntity;
+
 /**
  * Contains the name and the generate method for the interface returned when a sort criterion has
  * been established.
  *
- * <p>Suppose the class annotated with {@link
- * tech.darkespresso.hellbinder.annotations.ContentProviderEntity} is named {@code Foo}.
+ * <p>Suppose the class annotated with {@link ContentProviderEntity} is named {@code Foo}.
  *
  * <p>The generated interface will be:
  *

@@ -51,6 +51,7 @@ import tech.darkespresso.hellbinder.Operator;
 import tech.darkespresso.hellbinder.Order;
 import tech.darkespresso.hellbinder.annotations.Column;
 import tech.darkespresso.hellbinder.annotations.Constraint;
+import tech.darkespresso.hellbinder.annotations.Id;
 import tech.darkespresso.hellbinder.annotations.SortCriterion;
 import tech.darkespresso.hellbinder.compiler.generators.Constraining;
 import tech.darkespresso.hellbinder.compiler.generators.Ordering;
@@ -95,6 +96,11 @@ public class BoundFieldTest {
     BoundField boundField = new BoundField(mockVariableElement);
     assertEquals("_bar", boundField.getColumn());
     assertEquals(TypeName.INT, boundField.getType());
+    assertTrue(boundField.canBeConstrained());
+    assertTrue(boundField.canBeUsedForSorting());
+    assertFalse(boundField.isNullable());
+    assertEquals(mockVariableElement, boundField.getField());
+    assertFalse(boundField.isId());
 
     MethodSpec expectedConstraint =
         MethodSpec.methodBuilder("bar")
@@ -112,6 +118,29 @@ public class BoundFieldTest {
             .returns(Ordering.NAME)
             .build();
     assertEquals(expectedSortBy, boundField.getSortBy());
+
+    assertNull(boundField.getIsNull());
+  }
+
+  @Test
+  public void constructor_idIsEquivalentToConstraint() {
+    when(mockVariableElement.getAnnotation(Id.class)).thenReturn(mock(Id.class));
+    BoundField boundField = new BoundField(mockVariableElement);
+    assertEquals("_bar", boundField.getColumn());
+    assertEquals(TypeName.INT, boundField.getType());
+    assertFalse(boundField.canBeUsedForSorting());
+    assertTrue(boundField.canBeConstrained());
+    assertFalse(boundField.isNullable());
+    assertTrue(boundField.isId());
+
+    MethodSpec expectedConstraint =
+        MethodSpec.methodBuilder("bar")
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .addParameter(Operator.class, "op")
+            .addParameter(TypeName.INT, "value")
+            .returns(Constraining.NAME)
+            .build();
+    assertEquals(expectedConstraint, boundField.getConstraint());
   }
 
   @Test
@@ -121,6 +150,9 @@ public class BoundFieldTest {
     BoundField boundField = new BoundField(mockVariableElement);
     assertEquals("_bar", boundField.getColumn());
     assertEquals(TypeName.INT, boundField.getType());
+    assertTrue(boundField.canBeUsedForSorting());
+    assertFalse(boundField.canBeConstrained());
+    assertFalse(boundField.isNullable());
 
     assertNull(boundField.getConstraint());
 
@@ -131,6 +163,36 @@ public class BoundFieldTest {
             .returns(Ordering.NAME)
             .build();
     assertEquals(expectedSortBy, boundField.getSortBy());
+  }
+
+  @Test
+  public void constructor_nullableConstraint() {
+    Constraint nullableConstraint = mock(Constraint.class);
+    when(nullableConstraint.nullable()).thenReturn(true);
+    when(mockVariableElement.getAnnotation(Constraint.class)).thenReturn(nullableConstraint);
+    BoundField boundField = new BoundField(mockVariableElement);
+    assertEquals("_bar", boundField.getColumn());
+    assertEquals(TypeName.INT, boundField.getType());
+    assertFalse(boundField.canBeUsedForSorting());
+    assertTrue(boundField.canBeConstrained());
+    assertTrue(boundField.isNullable());
+
+    MethodSpec expectedConstraint =
+        MethodSpec.methodBuilder("bar")
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .addParameter(Operator.class, "op")
+            .addParameter(TypeName.INT, "value")
+            .returns(Constraining.NAME)
+            .build();
+    assertEquals(expectedConstraint, boundField.getConstraint());
+
+    MethodSpec expectedIsNull =
+        MethodSpec.methodBuilder("barIsNull")
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .addParameter(boolean.class, "value")
+            .returns(Constraining.NAME)
+            .build();
+    assertEquals(expectedIsNull, boundField.getIsNull());
   }
 
   @Test

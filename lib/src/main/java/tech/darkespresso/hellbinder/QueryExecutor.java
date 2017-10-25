@@ -26,12 +26,13 @@
 package tech.darkespresso.hellbinder;
 
 import java.util.List;
+import tech.darkespresso.hellbinder.annotations.ContentProviderEntity;
+
 /**
  * An interface to obtain a {@link List} of {@link Entity Entities}. This is overridden by generated
  * code.
  *
- * @param <Entity> A class (annotated with {@link
- *     tech.darkespresso.hellbinder.annotations.ContentProviderEntity}.
+ * @param <Entity> A class (annotated with {@link ContentProviderEntity}.
  * @param <ContentResolver> The class representing Android's content resolver.
  */
 public interface QueryExecutor<Entity, ContentResolver> {

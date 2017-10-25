@@ -40,6 +40,7 @@ import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
 import org.junit.Test;
 import tech.darkespresso.hellbinder.compiler.BoundField;
+
 /** Tests for {@link QueryRoot} */
 public class QueryRootTest {
   @Test

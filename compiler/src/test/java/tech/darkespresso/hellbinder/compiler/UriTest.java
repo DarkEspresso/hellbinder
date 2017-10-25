@@ -47,6 +47,7 @@ import javax.tools.Diagnostic;
 import org.junit.Before;
 import org.junit.Test;
 import tech.darkespresso.hellbinder.annotations.ContentUri;
+
 /** Tests for {@link Uri}. */
 public class UriTest {
   private TypeElement mockEntity;

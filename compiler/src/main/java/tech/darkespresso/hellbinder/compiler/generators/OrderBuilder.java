@@ -32,15 +32,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
+import tech.darkespresso.hellbinder.Order;
+import tech.darkespresso.hellbinder.annotations.Column;
+import tech.darkespresso.hellbinder.annotations.ContentProviderEntity;
+import tech.darkespresso.hellbinder.annotations.SortCriterion;
 import tech.darkespresso.hellbinder.compiler.BoundField;
+
 /**
  * Contains the name and the generate method for the interface returned when it is possible to
  * specify sort criteria.
  *
- * <p>Suppose the class annotated with {@link
- * tech.darkespresso.hellbinder.annotations.ContentProviderEntity} is named {@code Foo}, and it has
- * a {@link tech.darkespresso.hellbinder.annotations.Column}-annotated field named {@code bar} which
- * is also annotated by {@link tech.darkespresso.hellbinder.annotations.SortCriterion}.
+ * <p>Suppose the class annotated with {@link ContentProviderEntity} is named {@code Foo}, and it
+ * has a {@link Column}-annotated field named {@code bar} which is also annotated by {@link
+ * SortCriterion}.
  *
  * <p>The generated interface will be:
  *
@@ -50,8 +54,7 @@ import tech.darkespresso.hellbinder.compiler.BoundField;
  * }
  * }</pre>
  *
- * where {@link tech.darkespresso.hellbinder.Order order} is used to specify what order to use when
- * sorting.
+ * where {@link Order order} is used to specify what order to use when sorting.
  */
 public class OrderBuilder {
   static final ClassName NAME = ClassName.get("", "OrderBuilder");

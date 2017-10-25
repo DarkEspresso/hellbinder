@@ -42,6 +42,7 @@ import tech.darkespresso.hellbinder.annotations.Id;
 import tech.darkespresso.hellbinder.annotations.SortCriterion;
 import tech.darkespresso.hellbinder.compiler.generators.Constraining;
 import tech.darkespresso.hellbinder.compiler.generators.Ordering;
+
 /** Represents a public, non-final field annotated with {@link Column}. */
 public class BoundField {
   private final String column;
@@ -49,6 +50,7 @@ public class BoundField {
   @Nullable private final MethodSpec constraint;
   @Nullable private final MethodSpec sortBy;
   @Nonnull private final VariableElement field;
+  @Nullable private final MethodSpec isNull;
 
   BoundField(@Nonnull VariableElement field) {
     this.field = Preconditions.checkNotNull(field);
@@ -62,8 +64,20 @@ public class BoundField {
               .addParameter(type, "value")
               .returns(Constraining.NAME)
               .build();
+      Constraint constraintAnnotation = field.getAnnotation(Constraint.class);
+      if (constraintAnnotation != null && constraintAnnotation.nullable()) {
+        isNull =
+            MethodSpec.methodBuilder(field.getSimpleName().toString().concat("IsNull"))
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .addParameter(boolean.class, "value")
+                .returns(Constraining.NAME)
+                .build();
+      } else {
+        isNull = null;
+      }
     } else {
       constraint = null;
+      isNull = null;
     }
     if (field.getAnnotation(SortCriterion.class) != null) {
       sortBy =
@@ -124,6 +138,11 @@ public class BoundField {
     return sortBy;
   }
 
+  @Nullable
+  public MethodSpec getIsNull() {
+    return isNull;
+  }
+
   public String getFieldName() {
     return field.getSimpleName().toString();
   }
@@ -143,5 +162,9 @@ public class BoundField {
 
   public boolean isId() {
     return field.getAnnotation(Id.class) != null;
+  }
+
+  public boolean isNullable() {
+    return isNull != null;
   }
 }

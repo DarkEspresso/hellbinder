@@ -38,6 +38,7 @@ import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import tech.darkespresso.hellbinder.CloseableList;
 import tech.darkespresso.hellbinder.compiler.AndroidClasses;
+
 /**
  * Contains the method to generate a subclass of {@link AbstractList} that wraps a cursor.
  *
@@ -69,6 +70,7 @@ public class EntityList {
             .addModifiers(Modifier.PRIVATE)
             .addParameter(AndroidClasses.CURSOR, "cursor")
             .addStatement("$N = cursor", cursor)
+            .addStatement("$N.moveToFirst()", cursor)
             .build();
     MethodSpec size =
         MethodSpec.methodBuilder("size")

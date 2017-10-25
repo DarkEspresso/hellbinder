@@ -41,6 +41,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import org.junit.Test;
 import tech.darkespresso.hellbinder.compiler.UnsupportedTypeException;
+
 /** Tests for {@link CodeGen}. */
 public class CodeGenTest {
 
@@ -263,7 +264,7 @@ public class CodeGenTest {
     when(typeMirror.getKind()).thenReturn(TypeKind.OTHER);
     when(mockElement.asType()).thenReturn(typeMirror);
     try {
-      CharSequence getter = CodeGen.cursorGetterFor(mockElement);
+      CodeGen.cursorGetterFor(mockElement);
       fail();
     } catch (UnsupportedTypeException e) {
       // expected.

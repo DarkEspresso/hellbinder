@@ -50,4 +50,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
-public @interface Constraint {}
+public @interface Constraint {
+  boolean nullable() default false;
+}

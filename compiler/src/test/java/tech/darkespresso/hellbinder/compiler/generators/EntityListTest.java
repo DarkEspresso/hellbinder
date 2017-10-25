@@ -35,6 +35,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
 import org.junit.Test;
+
 /** Tests for {@link EntityList} */
 public class EntityListTest {
   @Test

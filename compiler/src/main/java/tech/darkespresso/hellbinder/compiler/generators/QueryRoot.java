@@ -26,7 +26,10 @@
 package tech.darkespresso.hellbinder.compiler.generators;
 
 import static tech.darkespresso.hellbinder.compiler.AndroidClasses.CONTENT_RESOLVER;
+<<<<<<< HEAD
 import static tech.darkespresso.hellbinder.compiler.utils.CollectionUtils.uniqueOrNull;
+=======
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -40,6 +43,11 @@ import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import tech.darkespresso.hellbinder.CloseableList;
 import tech.darkespresso.hellbinder.compiler.BoundField;
+<<<<<<< HEAD
+=======
+import tech.darkespresso.hellbinder.compiler.utils.CollectionUtils;
+
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 /**
  * Contains the {@link TypeSpec} representing the {@code QueryRoot} interface for the given entity.
  */
@@ -87,7 +95,12 @@ public class QueryRoot {
               .build();
       builder.addMethod(sortBy);
     }
+<<<<<<< HEAD
     BoundField id = fields.stream().filter(BoundField::isId).collect(uniqueOrNull());
+=======
+    BoundField id =
+        fields.stream().filter(BoundField::isId).collect(CollectionUtils.uniqueOrNull());
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
     if (id != null) {
       Preconditions.checkState(generateWhere);
       MethodSpec getById =

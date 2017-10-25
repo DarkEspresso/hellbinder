@@ -26,6 +26,7 @@
 package tech.darkespresso.hellbinder;
 
 import tech.darkespresso.hellbinder.annotations.SortCriterion;
+
 /**
  * An enum containing the two possible values for the ordering that can be imposed on a field
  * annotated with {@link SortCriterion}.

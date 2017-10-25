@@ -34,13 +34,15 @@ import com.squareup.javapoet.TypeSpec;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import tech.darkespresso.hellbinder.QueryExecutor;
+import tech.darkespresso.hellbinder.annotations.ContentProviderEntity;
+import tech.darkespresso.hellbinder.annotations.SortCriterion;
 import tech.darkespresso.hellbinder.compiler.AndroidClasses;
+
 /**
  * Contains the name and the generate method for the interface returned when an constraint has been
  * established.
  *
- * <p>Suppose the class annotated with {@link
- * tech.darkespresso.hellbinder.annotations.ContentProviderEntity ContentProviderEntity} is named
+ * <p>Suppose the class annotated with {@link ContentProviderEntity ContentProviderEntity} is named
  * {@code Foo}. The generated interface will be:
  *
  * <pre>{@code
@@ -52,9 +54,8 @@ import tech.darkespresso.hellbinder.compiler.AndroidClasses;
  *
  * where {@code OrderBuilder} is the interface exposing the methods to establish sorting criteria.
  *
- * <p>If {@code Foo} has at least one field annotated with {@link
- * tech.darkespresso.hellbinder.annotations.SortCriterion SortCriterion}, then the generated
- * interface will contain an additional method:
+ * <p>If {@code Foo} has at least one field annotated with {@link SortCriterion SortCriterion}, then
+ * the generated interface will contain an additional method:
  *
  * <pre>{@code
  * ...

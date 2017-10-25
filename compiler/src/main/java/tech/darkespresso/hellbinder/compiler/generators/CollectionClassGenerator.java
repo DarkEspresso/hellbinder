@@ -29,8 +29,6 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static javax.tools.Diagnostic.Kind.ERROR;
 import static tech.darkespresso.hellbinder.compiler.utils.CodeGen.cursorGetterFor;
-import static tech.darkespresso.hellbinder.compiler.utils.CollectionUtils.getUnique;
-import static tech.darkespresso.hellbinder.compiler.utils.CollectionUtils.uniqueOrNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -46,6 +44,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 import tech.darkespresso.hellbinder.Operator;
+import tech.darkespresso.hellbinder.annotations.ContentProviderEntity;
 import tech.darkespresso.hellbinder.annotations.ContentUri;
 import tech.darkespresso.hellbinder.compiler.AndroidClasses;
 import tech.darkespresso.hellbinder.compiler.BoundField;
@@ -54,13 +53,14 @@ import tech.darkespresso.hellbinder.compiler.ProcessingException;
 import tech.darkespresso.hellbinder.compiler.UnsupportedTypeException;
 import tech.darkespresso.hellbinder.compiler.Uri;
 import tech.darkespresso.hellbinder.compiler.utils.CodeGen;
+import tech.darkespresso.hellbinder.compiler.utils.CollectionUtils;
+
 /**
  * Contains the methods to generate the class that provides the methods to retrieve entities
  * from a content provider.
  *
  * <p>The name of the generated class is given by the value specified on
- * the {@link tech.darkespresso.hellbinder.annotations.ContentProviderEntity ContentProviderEntity}
- * annotation for a given entity class.
+ * the {@link ContentProviderEntity ContentProviderEntity} annotation for a given entity class.
  *
  * <p>For example, suppose that a class name {@code com.foobar.Contact} is annotated with {@code
  * @literal @ContentProviderEntity("Contacts")}:
@@ -105,6 +105,10 @@ import tech.darkespresso.hellbinder.compiler.utils.CodeGen;
  * }}</pre>
  */
 public class CollectionClassGenerator {
+
+  private CollectionClassGenerator() {
+    throw new UnsupportedOperationException();
+  }
 
   @VisibleForTesting
   public static TypeSpec generate(@Nonnull Entity entity, @Nonnull Messager messager) {
@@ -178,6 +182,7 @@ public class CollectionClassGenerator {
     return bindMethod.build();
   }
 
+  @SuppressWarnings("WeakerAccess")
   @VisibleForTesting
   static void addRequiredInterfaces(
       @Nonnull TypeName entityType,
@@ -196,6 +201,7 @@ public class CollectionClassGenerator {
     }
   }
 
+  @SuppressWarnings("WeakerAccess")
   @VisibleForTesting
   static void addRequiredRootMethods(
       @Nonnull TypeSpec.Builder builder,
@@ -203,14 +209,16 @@ public class CollectionClassGenerator {
       @Nonnull List<BoundField> fields,
       @Nonnull String uri) {
     if (fields.stream().anyMatch(BoundField::canBeConstrained)) {
-      MethodSpec where = getUnique(queryRoot.methodSpecs, m -> "where".equals(m.name));
+      MethodSpec where =
+          CollectionUtils.getUnique(queryRoot.methodSpecs, m -> "where".equals(m.name));
       builder.addMethod(
           CodeGen.implementStatic(where)
               .addStatement("return new $T($L)", QueryBuilderImpl.NAME, uri)
               .build());
     }
     if (fields.stream().anyMatch(BoundField::canBeUsedForSorting)) {
-      MethodSpec sortBy = getUnique(queryRoot.methodSpecs, m -> "sortBy".equals(m.name));
+      MethodSpec sortBy =
+          CollectionUtils.getUnique(queryRoot.methodSpecs, m -> "sortBy".equals(m.name));
       builder.addMethod(
           CodeGen.implementStatic(sortBy)
               .addStatement("return new $T($L)", QueryBuilderImpl.NAME, uri)
@@ -218,26 +226,40 @@ public class CollectionClassGenerator {
     }
   }
 
+  @SuppressWarnings("WeakerAccess")
   @VisibleForTesting
   static void addStaticRootMethodsHelpers(
       @Nonnull TypeSpec.Builder builder,
       @Nonnull TypeSpec queryRoot,
       @Nonnull List<BoundField> fields,
       @Nonnull String uri) {
-    MethodSpec get = getUnique(queryRoot.methodSpecs, m -> "get".equals(m.name));
+    MethodSpec get = CollectionUtils.getUnique(queryRoot.methodSpecs, m -> "get".equals(m.name));
     ParameterSpec contentResolver =
-        getUnique(get.parameters, p -> AndroidClasses.CONTENT_RESOLVER.equals(p.type));
+        CollectionUtils.getUnique(
+            get.parameters, p -> AndroidClasses.CONTENT_RESOLVER.equals(p.type));
     builder.addMethod(
         CodeGen.implementStatic(get)
             .addStatement("return new $T($L).get($N)", QueryBuilderImpl.NAME, uri, contentResolver)
             .build());
 
-    BoundField id = fields.stream().filter(BoundField::isId).collect(uniqueOrNull());
+    MethodSpec count =
+        CollectionUtils.getUnique(queryRoot.methodSpecs, m -> "count".equals(m.name));
+    builder.addMethod(
+        CodeGen.implementStatic(count)
+            .addStatement(
+                "return new $T($L).count($N)", QueryBuilderImpl.NAME, uri, contentResolver)
+            .build());
+
+    BoundField id =
+        fields.stream().filter(BoundField::isId).collect(CollectionUtils.uniqueOrNull());
     if (id != null) {
-      MethodSpec getById = getUnique(queryRoot.methodSpecs, m -> "getById".equals(m.name));
+      MethodSpec getById =
+          CollectionUtils.getUnique(queryRoot.methodSpecs, m -> "getById".equals(m.name));
       contentResolver =
-          getUnique(getById.parameters, p -> AndroidClasses.CONTENT_RESOLVER.equals(p.type));
-      ParameterSpec idParam = getUnique(getById.parameters, p -> id.getType().equals(p.type));
+          CollectionUtils.getUnique(
+              getById.parameters, p -> AndroidClasses.CONTENT_RESOLVER.equals(p.type));
+      ParameterSpec idParam =
+          CollectionUtils.getUnique(getById.parameters, p -> id.getType().equals(p.type));
       builder.addMethod(
           CodeGen.implementStatic(getById)
               .addStatement(
@@ -256,6 +278,7 @@ public class CollectionClassGenerator {
     }
   }
 
+  @SuppressWarnings("WeakerAccess")
   @VisibleForTesting
   static MethodSpec generateWithUriParams(@Nonnull Element uriElement) {
     uriElement = Preconditions.checkNotNull(uriElement);
@@ -274,9 +297,5 @@ public class CollectionClassGenerator {
         .addCode(params.stream().map(p -> "$N").collect(joining(",", "(", ")")), params.toArray())
         .addStatement(")")
         .build();
-  }
-
-  private CollectionClassGenerator() {
-    throw new UnsupportedOperationException();
   }
 }

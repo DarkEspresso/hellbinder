@@ -39,6 +39,7 @@ import java.util.List;
 import javax.lang.model.element.Modifier;
 import org.junit.Test;
 import tech.darkespresso.hellbinder.compiler.BoundField;
+
 /** Tests for {@link QueryBuilder} */
 public class QueryBuilderTest {
   @Test
@@ -62,6 +63,7 @@ public class QueryBuilderTest {
                 .addParameter(TypeName.LONG, "value")
                 .returns(Constraining.NAME)
                 .build());
+    when(bar.canBeConstrained()).thenReturn(true);
     when(foo.getConstraint()).thenReturn(null);
     List<BoundField> fields = ImmutableList.of(foo, bar);
 

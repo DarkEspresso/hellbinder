@@ -34,6 +34,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import tech.darkespresso.hellbinder.compiler.UnsupportedTypeException;
+
 /** Contains methods to aid code generation. */
 public final class CodeGen {
   private static final AnnotationSpec OVERRIDE = AnnotationSpec.builder(Override.class).build();
@@ -69,8 +70,7 @@ public final class CodeGen {
 
   /**
    * Creates a {@link MethodSpec.Builder} with the same signature as {@code method}, minus the
-   * modifier abstract (if present), but final and with the {@link java.lang.Override @Override}
-   * annotation.
+   * modifier abstract (if present), but final and with the {@link Override @Override} annotation.
    *
    * @param method the method to override.
    * @return a {@code MethodSpec.Builder} with the signature of the overridden method.

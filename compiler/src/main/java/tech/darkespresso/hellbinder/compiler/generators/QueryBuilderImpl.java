@@ -24,10 +24,13 @@
  */
 
 package tech.darkespresso.hellbinder.compiler.generators;
+<<<<<<< HEAD
 
 import static tech.darkespresso.hellbinder.compiler.utils.CodeGen.override;
 import static tech.darkespresso.hellbinder.compiler.utils.CollectionUtils.getUnique;
 import static tech.darkespresso.hellbinder.compiler.utils.CollectionUtils.uniqueOrNull;
+=======
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -52,6 +55,12 @@ import tech.darkespresso.hellbinder.Order;
 import tech.darkespresso.hellbinder.QueryExecutor;
 import tech.darkespresso.hellbinder.compiler.AndroidClasses;
 import tech.darkespresso.hellbinder.compiler.BoundField;
+<<<<<<< HEAD
+=======
+import tech.darkespresso.hellbinder.compiler.utils.CodeGen;
+import tech.darkespresso.hellbinder.compiler.utils.CollectionUtils;
+
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 /** Class responsible for the creation of the QueryBuilder interface implementation. */
 public class QueryBuilderImpl {
   public static final ClassName NAME = ClassName.get("", "QueryBuilderImpl");
@@ -112,7 +121,12 @@ public class QueryBuilderImpl {
     }
 
     if (queryRoot != null) {
+<<<<<<< HEAD
       BoundField id = fields.stream().filter(BoundField::isId).collect(uniqueOrNull());
+=======
+      BoundField id =
+          fields.stream().filter(BoundField::isId).collect(CollectionUtils.uniqueOrNull());
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
       implementQueryRoot(builder, queryRoot, id);
     }
     return builder.build();
@@ -122,7 +136,7 @@ public class QueryBuilderImpl {
       @Nonnull TypeSpec.Builder builder,
       @Nonnull List<BoundField> fields,
       boolean implementSortBy) {
-    if (!fields.stream().anyMatch(BoundField::canBeConstrained)) {
+    if (fields.stream().noneMatch(BoundField::canBeConstrained)) {
       return false;
     }
     builder
@@ -133,8 +147,14 @@ public class QueryBuilderImpl {
         .addMethods(
             fields
                 .stream()
-                .filter(f -> f.getConstraint() != null)
+                .filter(BoundField::canBeConstrained)
                 .map(QueryBuilderImpl::generateConstraint)
+                .collect(Collectors.toList()))
+        .addMethods(
+            fields
+                .stream()
+                .filter(BoundField::isNullable)
+                .map(QueryBuilderImpl::generateIsNull)
                 .collect(Collectors.toList()));
     if (implementSortBy && fields.stream().anyMatch(f -> f.getSortBy() != null)) {
       builder.addMethod(
@@ -161,7 +181,7 @@ public class QueryBuilderImpl {
 
   private static boolean generateSortCriteria(
       @Nonnull TypeSpec.Builder builder, @Nonnull List<BoundField> fields) {
-    if (!fields.stream().anyMatch(BoundField::canBeUsedForSorting)) {
+    if (fields.stream().noneMatch(BoundField::canBeUsedForSorting)) {
       return false;
     }
 
@@ -225,6 +245,7 @@ public class QueryBuilderImpl {
     builder.addSuperinterface(QueryRoot.NAME);
     Optional<MethodSpec> where =
         queryRoot.methodSpecs.stream().filter(m -> "where".equals(m.name)).findAny();
+<<<<<<< HEAD
     if (where.isPresent()) {
       builder.addMethod(override(where.get()).addStatement("return this").build());
     }
@@ -234,6 +255,17 @@ public class QueryBuilderImpl {
     if (sortBy.isPresent()) {
       builder.addMethod(override(sortBy.get()).addStatement("return this").build());
     }
+=======
+    where.ifPresent(
+        methodSpec ->
+            builder.addMethod(CodeGen.override(methodSpec).addStatement("return this").build()));
+
+    Optional<MethodSpec> sortBy =
+        queryRoot.methodSpecs.stream().filter(m -> "sortBy".equals(m.name)).findAny();
+    sortBy.ifPresent(
+        methodSpec ->
+            builder.addMethod(CodeGen.override(methodSpec).addStatement("return this").build()));
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 
     Optional<MethodSpec> getById =
         queryRoot.methodSpecs.stream().filter(m -> "getById".equals(m.name)).findAny();
@@ -242,8 +274,15 @@ public class QueryBuilderImpl {
       TypeName entitiesList =
           getUnique(queryRoot.methodSpecs, m -> "get".equals(m.name)).returnType;
       ParameterSpec contentResolver =
+<<<<<<< HEAD
           getUnique(getById.get().parameters, p -> p.type.equals(AndroidClasses.CONTENT_RESOLVER));
       ParameterSpec idParam = getUnique(getById.get().parameters, p -> id.getType().equals(p.type));
+=======
+          CollectionUtils.getUnique(
+              getById.get().parameters, p -> p.type.equals(AndroidClasses.CONTENT_RESOLVER));
+      ParameterSpec idParam =
+          CollectionUtils.getUnique(getById.get().parameters, p -> id.getType().equals(p.type));
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
       builder.addMethod(
           override(getById.get())
               .addStatement(
@@ -295,7 +334,12 @@ public class QueryBuilderImpl {
   private static MethodSpec generateSortCriterion(BoundField boundField) {
     MethodSpec sortBy = Preconditions.checkNotNull(boundField.getSortBy());
     ParameterSpec order =
+<<<<<<< HEAD
         getUnique(sortBy.parameters, p -> p.type.equals(ClassName.get(Order.class)));
+=======
+        CollectionUtils.getUnique(
+            sortBy.parameters, p -> p.type.equals(ClassName.get(Order.class)));
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
     MethodSpec.Builder builder =
         override(sortBy)
             .addStatement(
@@ -310,8 +354,15 @@ public class QueryBuilderImpl {
   private static MethodSpec generateConstraint(BoundField field) {
     MethodSpec constraint = Preconditions.checkNotNull(field.getConstraint());
     ParameterSpec op =
+<<<<<<< HEAD
         getUnique(constraint.parameters, p -> p.type.equals(ClassName.get(Operator.class)));
     ParameterSpec value = getUnique(constraint.parameters, p -> p.type.equals(field.getType()));
+=======
+        CollectionUtils.getUnique(
+            constraint.parameters, p -> p.type.equals(ClassName.get(Operator.class)));
+    ParameterSpec value =
+        CollectionUtils.getUnique(constraint.parameters, p -> p.type.equals(field.getType()));
+>>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
     MethodSpec.Builder builder =
         override(constraint)
             .addStatement(
@@ -322,6 +373,20 @@ public class QueryBuilderImpl {
       Preconditions.checkState(field.getType().isPrimitive());
       builder.addStatement("$N.add($T.toString($N))", args, field.getType().box(), value);
     }
+    return builder.addStatement("return this").build();
+  }
+
+  private static MethodSpec generateIsNull(BoundField field) {
+    MethodSpec constraint = Preconditions.checkNotNull(field.getIsNull());
+    ParameterSpec value =
+        CollectionUtils.getUnique(constraint.parameters, p -> p.type.equals(TypeName.BOOLEAN));
+    MethodSpec.Builder builder =
+        CodeGen.override(constraint)
+            .addStatement(
+                "$N.append($S).append($N ? \" IS NULL\" : \" IS NOT NULL\")",
+                query,
+                field.getColumn(),
+                value);
     return builder.addStatement("return this").build();
   }
 }

@@ -38,6 +38,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
 import tech.darkespresso.hellbinder.annotations.ContentUri;
+
 /**
  * Finds the static field or method annotated with {@link ContentUri} of a class annotated with
  * {@link Entity}.

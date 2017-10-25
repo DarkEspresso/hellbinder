@@ -3,6 +3,8 @@ plugins {
   id 'com.github.kt3k.coveralls' version '2.8.1'
 }
 
+version = '0.1.0'
+
 allprojects {
   apply plugin: 'base'
 
@@ -15,16 +17,17 @@ project(':compiler') {
   apply plugin: 'jacoco'
 
   jacoco {
-    toolVersion '0.7.6.201602180812'
+    toolVersion '0.7.9'
   }
 
 }
 
 subprojects {
   apply plugin: 'java'
+  version = rootProject.version
 }
 
-task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+task jacocoRootReport(type: JacocoReport) {
   dependsOn project(':compiler').test
   sourceDirectories = files(project(':compiler').sourceSets.main.allSource.srcDirs)
   classDirectories = files(project(':compiler').sourceSets.main.output)
