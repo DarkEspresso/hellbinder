@@ -26,6 +26,7 @@
 package tech.darkespresso.hellbinder.compiler.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,6 +35,8 @@ import static tech.darkespresso.hellbinder.compiler.utils.CodeGenTest.CursorTest
 
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
@@ -44,6 +47,25 @@ import tech.darkespresso.hellbinder.compiler.UnsupportedTypeException;
 
 /** Tests for {@link CodeGen}. */
 public class CodeGenTest {
+  @Test
+  public void cannotInstantiate() {
+    Constructor[] constructors = CodeGen.class.getDeclaredConstructors();
+    assertEquals(1, constructors.length);
+    Constructor constructor = constructors[0];
+
+    assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()));
+    assertEquals(0, constructor.getParameterCount());
+
+    try {
+      constructor.setAccessible(true);
+      constructor.newInstance();
+      fail();
+    } catch (IllegalAccessException | InstantiationException e) {
+      fail();
+    } catch (InvocationTargetException e) {
+      // success.
+    }
+  }
 
   @Test
   public void implementStatic_public() {

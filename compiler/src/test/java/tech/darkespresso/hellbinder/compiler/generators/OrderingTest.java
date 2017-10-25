@@ -34,11 +34,33 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import javax.lang.model.element.Modifier;
 import org.junit.Test;
 
 /** Tests for {@link Ordering} */
 public class OrderingTest {
+  @Test
+  public void cannotInstantiate() {
+    Constructor[] constructors = Ordering.class.getDeclaredConstructors();
+    assertEquals(1, constructors.length);
+    Constructor constructor = constructors[0];
+
+    assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()));
+    assertEquals(0, constructor.getParameterCount());
+
+    try {
+      constructor.setAccessible(true);
+      constructor.newInstance();
+      fail();
+    } catch (IllegalAccessException | InstantiationException e) {
+      fail();
+    } catch (InvocationTargetException e) {
+      // success.
+    }
+  }
+
   @Test
   public void generate() {
     TypeName entityType = ClassName.get("", "Foo");

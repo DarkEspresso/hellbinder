@@ -26,6 +26,7 @@
 package tech.darkespresso.hellbinder.compiler.generators;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,6 +35,8 @@ import com.google.common.collect.ImmutableList;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import javax.lang.model.element.Modifier;
 import org.junit.Test;
@@ -41,6 +44,26 @@ import tech.darkespresso.hellbinder.compiler.BoundField;
 
 /** Tests for {@link OrderBuilder} */
 public class OrderBuilderTest {
+  @Test
+  public void cannotInstantiate() {
+    Constructor[] constructors = OrderBuilder.class.getDeclaredConstructors();
+    assertEquals(1, constructors.length);
+    Constructor constructor = constructors[0];
+
+    assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()));
+    assertEquals(0, constructor.getParameterCount());
+
+    try {
+      constructor.setAccessible(true);
+      constructor.newInstance();
+      fail();
+    } catch (IllegalAccessException | InstantiationException e) {
+      fail();
+    } catch (InvocationTargetException e) {
+      // success.
+    }
+  }
+
   @Test
   public void generate() {
     // Set up two Fields like:

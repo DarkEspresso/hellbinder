@@ -32,12 +32,35 @@ import static org.junit.Assert.fail;
 import static tech.darkespresso.hellbinder.compiler.utils.CollectionUtils.uniqueOrNull;
 
 import com.google.common.collect.ImmutableList;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import org.junit.Test;
 
 /** Tests for {@link CollectionUtils}. */
 public class CollectionUtilsTest {
+  @Test
+  public void cannotInstantiate() {
+    Constructor[] constructors = CollectionUtils.class.getDeclaredConstructors();
+    assertEquals(1, constructors.length);
+    Constructor constructor = constructors[0];
+
+    assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+    assertEquals(0, constructor.getParameterCount());
+
+    try {
+      constructor.setAccessible(true);
+      constructor.newInstance();
+      fail();
+    } catch (IllegalAccessException | InstantiationException e) {
+      fail();
+    } catch (InvocationTargetException e) {
+      // success.
+    }
+  }
+
   @Test
   public void getUnique_hasUniqueElement() {
     Collection<Integer> collection = ImmutableList.of(1, 2, 3, 4, 5);
