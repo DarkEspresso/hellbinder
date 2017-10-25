@@ -32,30 +32,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.lang.model.element.Modifier;
-<<<<<<< HEAD
-=======
 import tech.darkespresso.hellbinder.Operator;
 import tech.darkespresso.hellbinder.annotations.Column;
 import tech.darkespresso.hellbinder.annotations.Constraint;
 import tech.darkespresso.hellbinder.annotations.ContentProviderEntity;
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 import tech.darkespresso.hellbinder.compiler.BoundField;
 
 /**
  * Contains the name and the generate method for the interface returned when it is possible to
  * specify constraints.
  *
-<<<<<<< HEAD
- * <p>Suppose the class annotated with {@link
- * tech.darkespresso.hellbinder.annotations.ContentProviderEntity ContentProviderEntity} is named
- * {@code Foo}, and it has a {@link tech.darkespresso.hellbinder.annotations.Column Column
- * }-annotated {@code int} field named {@code bar} which is also annotated by {@link
- * tech.darkespresso.hellbinder.annotations.Constraint Constraint}.
-=======
  * <p>Suppose the class annotated with {@link ContentProviderEntity ContentProviderEntity} is named
  * {@code Foo}, and it has a {@link Column Column }-annotated {@code int} field named {@code bar}
  * which is also annotated by {@link Constraint Constraint}.
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
  *
  * <p>The generated interface will be:
  *
@@ -65,13 +54,8 @@ import tech.darkespresso.hellbinder.compiler.BoundField;
  * }
  * }</pre>
  *
-<<<<<<< HEAD
- * where {@link tech.darkespresso.hellbinder.Operator op} is used to specify what kind of relation
- * must there be between the field and the given value.
-=======
  * where {@link Operator op} is used to specify what kind of relation must there be between the
  * field and the given value.
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
  */
 public class QueryBuilder {
   static final ClassName NAME = ClassName.get("", "QueryBuilder");

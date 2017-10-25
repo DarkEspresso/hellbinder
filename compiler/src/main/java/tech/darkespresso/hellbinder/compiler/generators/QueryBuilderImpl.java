@@ -24,13 +24,6 @@
  */
 
 package tech.darkespresso.hellbinder.compiler.generators;
-<<<<<<< HEAD
-
-import static tech.darkespresso.hellbinder.compiler.utils.CodeGen.override;
-import static tech.darkespresso.hellbinder.compiler.utils.CollectionUtils.getUnique;
-import static tech.darkespresso.hellbinder.compiler.utils.CollectionUtils.uniqueOrNull;
-=======
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -55,12 +48,9 @@ import tech.darkespresso.hellbinder.Order;
 import tech.darkespresso.hellbinder.QueryExecutor;
 import tech.darkespresso.hellbinder.compiler.AndroidClasses;
 import tech.darkespresso.hellbinder.compiler.BoundField;
-<<<<<<< HEAD
-=======
 import tech.darkespresso.hellbinder.compiler.utils.CodeGen;
 import tech.darkespresso.hellbinder.compiler.utils.CollectionUtils;
 
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 /** Class responsible for the creation of the QueryBuilder interface implementation. */
 public class QueryBuilderImpl {
   public static final ClassName NAME = ClassName.get("", "QueryBuilderImpl");
@@ -121,12 +111,8 @@ public class QueryBuilderImpl {
     }
 
     if (queryRoot != null) {
-<<<<<<< HEAD
-      BoundField id = fields.stream().filter(BoundField::isId).collect(uniqueOrNull());
-=======
       BoundField id =
           fields.stream().filter(BoundField::isId).collect(CollectionUtils.uniqueOrNull());
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
       implementQueryRoot(builder, queryRoot, id);
     }
     return builder.build();
@@ -245,17 +231,6 @@ public class QueryBuilderImpl {
     builder.addSuperinterface(QueryRoot.NAME);
     Optional<MethodSpec> where =
         queryRoot.methodSpecs.stream().filter(m -> "where".equals(m.name)).findAny();
-<<<<<<< HEAD
-    if (where.isPresent()) {
-      builder.addMethod(override(where.get()).addStatement("return this").build());
-    }
-
-    Optional<MethodSpec> sortBy =
-        queryRoot.methodSpecs.stream().filter(m -> "sortBy".equals(m.name)).findAny();
-    if (sortBy.isPresent()) {
-      builder.addMethod(override(sortBy.get()).addStatement("return this").build());
-    }
-=======
     where.ifPresent(
         methodSpec ->
             builder.addMethod(CodeGen.override(methodSpec).addStatement("return this").build()));
@@ -265,26 +240,20 @@ public class QueryBuilderImpl {
     sortBy.ifPresent(
         methodSpec ->
             builder.addMethod(CodeGen.override(methodSpec).addStatement("return this").build()));
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
 
     Optional<MethodSpec> getById =
         queryRoot.methodSpecs.stream().filter(m -> "getById".equals(m.name)).findAny();
     if (getById.isPresent()) {
       Preconditions.checkNotNull(id);
       TypeName entitiesList =
-          getUnique(queryRoot.methodSpecs, m -> "get".equals(m.name)).returnType;
+          CollectionUtils.getUnique(queryRoot.methodSpecs, m -> "get".equals(m.name)).returnType;
       ParameterSpec contentResolver =
-<<<<<<< HEAD
-          getUnique(getById.get().parameters, p -> p.type.equals(AndroidClasses.CONTENT_RESOLVER));
-      ParameterSpec idParam = getUnique(getById.get().parameters, p -> id.getType().equals(p.type));
-=======
           CollectionUtils.getUnique(
               getById.get().parameters, p -> p.type.equals(AndroidClasses.CONTENT_RESOLVER));
       ParameterSpec idParam =
           CollectionUtils.getUnique(getById.get().parameters, p -> id.getType().equals(p.type));
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
       builder.addMethod(
-          override(getById.get())
+          CodeGen.override(getById.get())
               .addStatement(
                   "$T entities = $N($T.EQ, $N).get($N)",
                   entitiesList,
@@ -334,14 +303,10 @@ public class QueryBuilderImpl {
   private static MethodSpec generateSortCriterion(BoundField boundField) {
     MethodSpec sortBy = Preconditions.checkNotNull(boundField.getSortBy());
     ParameterSpec order =
-<<<<<<< HEAD
-        getUnique(sortBy.parameters, p -> p.type.equals(ClassName.get(Order.class)));
-=======
         CollectionUtils.getUnique(
             sortBy.parameters, p -> p.type.equals(ClassName.get(Order.class)));
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
     MethodSpec.Builder builder =
-        override(sortBy)
+        CodeGen.override(sortBy)
             .addStatement(
                 "$N.append($S).append(' ').append($N.toString())",
                 sortOrder,
@@ -354,17 +319,12 @@ public class QueryBuilderImpl {
   private static MethodSpec generateConstraint(BoundField field) {
     MethodSpec constraint = Preconditions.checkNotNull(field.getConstraint());
     ParameterSpec op =
-<<<<<<< HEAD
-        getUnique(constraint.parameters, p -> p.type.equals(ClassName.get(Operator.class)));
-    ParameterSpec value = getUnique(constraint.parameters, p -> p.type.equals(field.getType()));
-=======
         CollectionUtils.getUnique(
             constraint.parameters, p -> p.type.equals(ClassName.get(Operator.class)));
     ParameterSpec value =
         CollectionUtils.getUnique(constraint.parameters, p -> p.type.equals(field.getType()));
->>>>>>> b8eae2b... Add <field>IsNull(boolean) in the constraint generator. More tests for BoundField. Fixes some issues with imports.
     MethodSpec.Builder builder =
-        override(constraint)
+        CodeGen.override(constraint)
             .addStatement(
                 "$N.append($S).append($N.toString()).append('?')", query, field.getColumn(), op);
     if (field.getType().equals(TypeName.get(String.class))) {
