@@ -42,7 +42,7 @@ import javax.lang.model.element.Modifier;
 import org.junit.Test;
 import tech.darkespresso.hellbinder.compiler.BoundField;
 
-/** Tests for {@link OrderBuilder} */
+/** Tests for {@link OrderBuilder}. */
 public class OrderBuilderTest {
   @Test
   public void cannotInstantiate() {

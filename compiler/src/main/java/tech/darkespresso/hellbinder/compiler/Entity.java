@@ -65,8 +65,7 @@ public class Entity {
   Entity(TypeElement element, Types types, Messager messager) throws ProcessingException {
     if (element.getEnclosingElement().getKind() != ElementKind.PACKAGE) {
       throw new ProcessingException(
-          String.format("Nested classes cannot be annotated with @%s", ContentProviderEntity.class),
-          element);
+          "Nested classes cannot be annotated with " + ContentProviderEntity.class, element);
     }
     this.element = element;
     typeName = TypeName.get(element.asType());
@@ -143,9 +142,7 @@ public class Entity {
         if (fieldColumnMap.containsValue(column)) {
           VariableElement field = fieldColumnMap.inverse().get(column);
           messager.printMessage(
-              ERROR,
-              String.format("Column %s already mapped to field @%s", column, field),
-              element);
+              ERROR, String.format("Column %s already mapped to field %s", column, field), element);
           continue;
         }
         fieldColumnMap.put(element, column);

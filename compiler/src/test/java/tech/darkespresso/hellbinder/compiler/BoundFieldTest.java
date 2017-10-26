@@ -64,7 +64,6 @@ public class BoundFieldTest {
   public void setUp() {
     // Set up a VariableElement typeName like:
     // ...
-    //   @Constraint
     //   @Column("_bar")
     //   public int bar;
     Column mockColumn = mock(Column.class);
